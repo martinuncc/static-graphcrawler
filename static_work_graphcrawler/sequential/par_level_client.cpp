@@ -202,23 +202,24 @@ int main(int argc, char *argv[])
 
     const auto start{std::chrono::steady_clock::now()};
 
-    for (const auto &n : bfs(start_node, depth))
-    {
-        for (const auto &node : n)
-            std::cout << "- " << node << "\n";
-        std::cout << n.size() << "\n";
-    }
-
-    const auto finish{std::chrono::steady_clock::now()};
-    const std::chrono::duration<double> elapsed_seconds{finish - start};
-    std::cout << "Time to crawl: " << elapsed_seconds.count() << "s\n";
-
     std::ofstream logFile("par_log.txt", std::ios::app);
     if (!logFile)
     {
         std::cerr << "Error opening log file." << std::endl;
         return 1;
     }
+
+    for (const auto &n : bfs(start_node, depth))
+    {
+        for (const auto &node : n)
+            logFile << "- " << node << "\n";
+        logFile << n.size() << "\n";
+    }
+
+    const auto finish{std::chrono::steady_clock::now()};
+    const std::chrono::duration<double> elapsed_seconds{finish - start};
+    std::cout << "Time to crawl: " << elapsed_seconds.count() << "s\n";
+
     logFile << "In Parallel: Crawled " << start_node << " to depth " << depth << " in " << elapsed_seconds.count() << " seconds.\n" << std::endl;
     logFile.close();
     
