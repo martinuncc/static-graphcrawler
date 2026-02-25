@@ -8,6 +8,7 @@
 #include <stdexcept>
 #include <thread>
 #include <mutex>
+#include <fstream>
 #include "rapidjson/error/error.h"
 
 struct ParseException : std::runtime_error, rapidjson::ParseResult {
@@ -212,6 +213,15 @@ int main(int argc, char *argv[])
     const std::chrono::duration<double> elapsed_seconds{finish - start};
     std::cout << "Time to crawl: " << elapsed_seconds.count() << "s\n";
 
+    std::ofstream logFile("par_log.txt", std::ios::app);
+    if (!logFile)
+    {
+        std::cerr << "Error opening log file." << std::endl;
+        return 1;
+    }
+    logFile << "In Parallel: Crawled " << start_node << " to depth " << depth << " in " << elapsed_seconds.count() << " seconds.\n" << std::endl;
+    logFile.close();
+    
     curl_global_cleanup();
     return 0;
 }

@@ -6,6 +6,7 @@
 #include <cstdlib>
 #include <curl/curl.h>
 #include <stdexcept>
+#include <fstream>
 #include "rapidjson/error/error.h"
 
 struct ParseException : std::runtime_error, rapidjson::ParseResult {
@@ -166,9 +167,16 @@ int main(int argc, char* argv[]) {
     const auto finish{std::chrono::steady_clock::now()};
     const std::chrono::duration<double> elapsed_seconds{finish - start};
     std::cout << "Time to crawl: "<<elapsed_seconds.count() << "s\n";
+
+    std::ofstream logFile("seq_log.txt", std::ios::app);
+    if (!logFile)
+    {
+        std::cerr << "Error opening log file." << std::endl;
+        return 1;
+    }
+    logFile << "Sequentially: Crawled " << start_node << " to depth " << depth << " in " << elapsed_seconds.count() << " seconds.\n" << std::endl;
+    logFile.close();
     
     curl_easy_cleanup(curl);
-
-    
     return 0;
 }
